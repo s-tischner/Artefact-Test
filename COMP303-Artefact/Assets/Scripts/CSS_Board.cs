@@ -14,15 +14,59 @@ public class CSS_Board : MonoBehaviour
     [SerializeField] GameObject White;
     [SerializeField] GameObject Black;
 
+    CSS_GameManager gameManager;
+
 
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
+
         GenerateBoard();
         UpdateBoard();
     }
 
-    private void Update()
+    private void OnMouseDown()
     {
+        if(gameManager.selectedPiece != null)
+        {
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
+            print(worldPosition);
+            Vector3 cellPos = Vector3.zero;
+
+            cellPos.x = (worldPosition.x);
+
+            cellPos.x = worldPosition.x - (worldPosition.x % .5f) + .25f;
+            cellPos.y = worldPosition.y - (worldPosition.y % .5f) + .25f;
+
+            //print("x: " + cellPos.x + " // y: " + cellPos.y);
+
+
+            var x = (cellPos.x / .5)-.5f;
+            var y = (cellPos.y / .5)-.5f;
+
+            if(gameManager.selectedPiece.GetComponent<CSS_Piece>().validMove(Pieces,new Vector2(((float)x), ((float)y))))
+            {
+                print("x: " + x + " // y: " + y);
+
+                gameManager.selectedPiece.transform.position = cellPos;
+
+                Vector2 ogPlace = gameManager.selectedPiece.GetComponent<CSS_Piece>().FindPlace(Pieces);
+
+                int x1 = (int)ogPlace.x;
+                int y1 = (int)ogPlace.y;
+
+                int x2 = (int)x;
+                int y2 = (int)y;
+
+                Pieces[x1, y1] = null;
+
+                Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
+
+                gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
+            }
+
+            
+        }
 
     }
 
