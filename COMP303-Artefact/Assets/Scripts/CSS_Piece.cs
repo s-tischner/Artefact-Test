@@ -2,16 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Piece script
+// handles all internal piece logic
+// authored by Stefanie Tischner
+
 public class CSS_Piece : MonoBehaviour
 {
+    // keeps track of piece ID
     public bool isWhite;
     public bool isKing;
 
+    // refs
     private CSS_GameManager gameManager;
     private CSS_Board board;
 
     private SpriteRenderer spriteRenderer;
 
+    // houses the sprites
     [SerializeField] Sprite Base;
     [SerializeField] Sprite BaseSelect;
     [SerializeField] Sprite King;
@@ -26,12 +33,7 @@ public class CSS_Piece : MonoBehaviour
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    // select/deselcts on click
     private void OnMouseDown()
     {
         if(gameManager.selectedPiece == gameObject)
@@ -44,21 +46,29 @@ public class CSS_Piece : MonoBehaviour
         }
     }
 
+    // deselect
+    // turns piece into idle state
     public void Deselect()
     {
         gameManager.selectedPiece = null;
-        spriteRenderer.sprite = Base;
+        if(!isKing)spriteRenderer.sprite = Base;
+        else spriteRenderer.sprite = King;
         gameManager.boardCollider.enabled = false;
     }
 
+    //select
+    // turns piece into active state
     private void Select()
     {
         if (gameManager.selectedPiece != null) gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
-        spriteRenderer.sprite = BaseSelect;
+        if (!isKing)spriteRenderer.sprite = BaseSelect;
+        else spriteRenderer.sprite = KingSelect;
+
         gameManager.selectedPiece = gameObject;
         gameManager.boardCollider.enabled = true;
     }
 
+    // valid move bool
     public bool validMove(CSS_Piece[,] board, Vector2 cell)
     {
         if (blackBase(board, cell) || whiteBase(board, cell))
@@ -68,33 +78,109 @@ public class CSS_Piece : MonoBehaviour
         return false;
     }
 
+    // move logic for black pieces
     public bool blackBase(CSS_Piece[,] board, Vector2 cell)
     {
-        if (isWhite) return false;
+        if (isWhite && !isKing)return false;
+        if (gameManager.whiteTurn && !isWhite) return false;
         else
         {
             Vector2 pos = FindPlace(board);
             if(pos.x > 7) return false;
-            if (cell.y == pos.y - 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1)) return true;
+            if (board[(int)cell.x, (int)cell.y] != null) return false;
+            if (cell.y == pos.y - 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1))
+            {
+                gameManager.whiteTurn = !gameManager.whiteTurn;
+                checkForKing(cell);
+                return true;
+            }
+
+            //right capture check
+            if (cell.y == pos.y - 2 && cell.x == pos.x + 2 && board[(int)pos.x + 1, (int)pos.y - 1] != null)
+            {
+                // if piece's color doesnt match own
+                if (board[(int)pos.x + 1, (int)pos.y - 1].GetComponent<CSS_Piece>().isWhite != isWhite)
+                {
+                    board[(int)pos.x + 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
+                    board[(int)pos.x + 1, (int)pos.y - 1] = null;
+                    gameManager.whiteTurn = !gameManager.whiteTurn;
+                    checkForKing(cell);
+                    return true;
+                }
+            }
+            // left capture check
+            if (cell.y == pos.y - 2 && cell.x == pos.x - 2 && board[(int)pos.x - 1, (int)pos.y - 1] != null)
+            {
+                // if piece's color doesnt match own
+                if (board[(int)pos.x - 1, (int)pos.y - 1].GetComponent<CSS_Piece>().isWhite != isWhite)
+                {
+                    board[(int)pos.x - 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
+                    board[(int)pos.x - 1, (int)pos.y - 1] = null;
+                    gameManager.whiteTurn = !gameManager.whiteTurn;
+                    checkForKing(cell);
+                    return true;
+                }
+            }
+
             return false;
 
 
         }
     }
 
+    //move logic for white pieces
     public bool whiteBase(CSS_Piece[,] board, Vector2 cell)
     {
-        if (!isWhite) return false;
+        //making sure its a valid move based on piece type
+        if (!isWhite && !isKing) return false;
+        if(!gameManager.whiteTurn && isWhite) return false;
+
         else
         {
-            print(cell);
+            // making sure the move is legal
             Vector2 pos = FindPlace(board);
             if (pos.x > 7) return false;
-            if (cell.y == pos.y + 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1))return true;
+            if (board[(int)cell.x, (int)cell.y] != null) return false;
+
+            //simple move check
+            if (cell.y == pos.y + 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1))
+            {
+                gameManager.whiteTurn = !gameManager.whiteTurn;
+                checkForKing(cell);
+                return true;
+            }
+
+            //right capture check
+            if (cell.y == pos.y + 2 && cell.x == pos.x + 2 && board[(int)pos.x+1, (int)pos.y+1] != null)
+            {
+                // if piece's color doesnt match own
+                if(board[(int)pos.x + 1, (int)pos.y + 1].GetComponent<CSS_Piece>().isWhite != isWhite)
+                {
+                    board[(int)pos.x + 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
+                    board[(int)pos.x + 1, (int)pos.y + 1] = null;
+                    gameManager.whiteTurn = !gameManager.whiteTurn;
+                    checkForKing(cell);
+                    return true;
+                }
+            }
+            // left capture check
+            if (cell.y == pos.y + 2 && cell.x == pos.x - 2 && board[(int)pos.x - 1, (int)pos.y + 1] != null)
+            {
+                // if piece's color doesnt match own
+                if (board[(int)pos.x - 1, (int)pos.y + 1].GetComponent<CSS_Piece>().isWhite != isWhite)
+                {
+                    board[(int)pos.x - 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
+                    board[(int)pos.x - 1, (int)pos.y + 1] = null;
+                    gameManager.whiteTurn = !gameManager.whiteTurn;
+                    checkForKing(cell);
+                    return true;
+                }
+            }
             return false;
         }
     }
 
+    //function to find a piece within the array
     public Vector2 FindPlace(CSS_Piece[,] board)
     {
         for (int i = 0; i < 8; i++)
@@ -109,6 +195,22 @@ public class CSS_Piece : MonoBehaviour
             }
         }
 
+        // if its not valid it returns a vector thats out of bounds of the board
         return new Vector2(10,10);
+    }
+
+    private void checkForKing(Vector2 pos)
+    {
+        if(pos.y == 0 && !isKing && !isWhite)
+        {
+            spriteRenderer.sprite = King;
+            isKing = true;
+        }
+
+        if (pos.y == 7 && !isKing && isWhite)
+        {
+            spriteRenderer.sprite = King;
+            isKing = true;
+        }
     }
 }

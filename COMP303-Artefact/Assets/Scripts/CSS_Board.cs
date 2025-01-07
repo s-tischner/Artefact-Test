@@ -19,37 +19,35 @@ public class CSS_Board : MonoBehaviour
 
     void Start()
     {
+        //finds game manager
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
 
+        //initializes board
         GenerateBoard();
         UpdateBoard();
     }
 
+    // manual play script
     private void OnMouseDown()
     {
         if(gameManager.selectedPiece != null)
         {
+            // code to convert world space into game space
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
-            print(worldPosition);
             Vector3 cellPos = Vector3.zero;
 
-            cellPos.x = (worldPosition.x);
-
+            //averages click into a cell on board
             cellPos.x = worldPosition.x - (worldPosition.x % .5f) + .25f;
             cellPos.y = worldPosition.y - (worldPosition.y % .5f) + .25f;
 
-            //print("x: " + cellPos.x + " // y: " + cellPos.y);
-
-
+            //turns cell pos into the board array index
             var x = (cellPos.x / .5)-.5f;
             var y = (cellPos.y / .5)-.5f;
 
+            // if the move is valid
             if(gameManager.selectedPiece.GetComponent<CSS_Piece>().validMove(Pieces,new Vector2(((float)x), ((float)y))))
             {
-                print("x: " + x + " // y: " + y);
-
-                gameManager.selectedPiece.transform.position = cellPos;
-
+                // finds piece in the array
                 Vector2 ogPlace = gameManager.selectedPiece.GetComponent<CSS_Piece>().FindPlace(Pieces);
 
                 int x1 = (int)ogPlace.x;
@@ -58,10 +56,16 @@ public class CSS_Board : MonoBehaviour
                 int x2 = (int)x;
                 int y2 = (int)y;
 
+                // gets rid of old spot
                 Pieces[x1, y1] = null;
 
+                //puts the piece into the new place
                 Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
 
+                //updates board
+                UpdateBoard();
+
+                //unselects piece
                 gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
             }
 
@@ -70,8 +74,10 @@ public class CSS_Board : MonoBehaviour
 
     }
 
+    //generates the board
     private void GenerateBoard()
     {
+        //white
         for (int y = 0; y < 3; y++)
         {
             for(int x = 0; x < 8; x+=2)
@@ -80,6 +86,7 @@ public class CSS_Board : MonoBehaviour
             }
         }
 
+        //black
         for (int y = 7; y > 4; y--)
         {
             for (int x = 0; x < 8; x += 2)
@@ -89,6 +96,7 @@ public class CSS_Board : MonoBehaviour
         }
     }
 
+    //generates the piece based on prefab
     private void GeneratePiece(int x, int y, GameObject color)
     {
         GameObject piece = Instantiate(color);
@@ -96,6 +104,7 @@ public class CSS_Board : MonoBehaviour
         Pieces[x,y] = p;
     }
 
+    //reads the board array and places pieces based on the info
     public void UpdateBoard()
     {
         for (int x = 0; x < 8; x++)
