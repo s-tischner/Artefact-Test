@@ -62,6 +62,8 @@ public class CSS_Board : MonoBehaviour
                 //puts the piece into the new place
                 Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
 
+                if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
+
                 //updates board
                 UpdateBoard();
 

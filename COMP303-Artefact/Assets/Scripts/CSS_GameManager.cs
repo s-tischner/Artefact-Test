@@ -28,4 +28,47 @@ public class CSS_GameManager : MonoBehaviour
     void Update()
     {
     }
+
+    public class boardVal
+    {
+        public boardVal(int v, int w, int b)
+        {
+            value = v;
+            whiteCount = w;
+            blackCount = b;
+        }
+
+        public int value;
+        public int whiteCount;
+        public int blackCount;
+    }
+
+    public boardVal boardEvaluation(CSS_Piece[,] board)
+    {
+        boardVal val = new boardVal(0, 0, 0);
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                if (board[y,x] != null)
+                {
+                    if (board[y, x].isWhite)
+                    {
+                        if (board[y, x].isKing) val.value += 20;
+                        val.value += 10;
+                        val.whiteCount++;
+                    }
+
+                    else
+                    {
+                        if (board[y, x].isKing) val.value -= 20;
+                        val.value -= 10;
+                        val.blackCount++;
+                    }
+                }
+            }
+        }
+
+        return val;
+    }
 }
