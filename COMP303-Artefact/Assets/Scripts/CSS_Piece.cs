@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 // Piece script
 // handles all internal piece logic
@@ -8,6 +9,7 @@ using UnityEngine;
 
 public class CSS_Piece : MonoBehaviour
 {
+    #region vars
     // keeps track of piece ID
     public bool isWhite;
     public bool isKing;
@@ -24,7 +26,9 @@ public class CSS_Piece : MonoBehaviour
     [SerializeField] Sprite King;
     [SerializeField] Sprite KingSelect;
 
+    #endregion
 
+    #region start/update
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
@@ -45,7 +49,9 @@ public class CSS_Piece : MonoBehaviour
             Select();
         }
     }
+    #endregion
 
+    #region select logic
     // deselect
     // turns piece into idle state
     public void Deselect()
@@ -67,7 +73,9 @@ public class CSS_Piece : MonoBehaviour
         gameManager.selectedPiece = gameObject;
         gameManager.boardCollider.enabled = true;
     }
+    #endregion
 
+    #region valid move checks
     // valid move bool
     public bool validMove(CSS_Piece[,] board, Vector2 cell)
     {
@@ -179,7 +187,9 @@ public class CSS_Piece : MonoBehaviour
             return false;
         }
     }
+    #endregion
 
+    #region MISC functions
     //function to find a piece within the array
     public Vector2 FindPlace(CSS_Piece[,] board)
     {
@@ -213,4 +223,51 @@ public class CSS_Piece : MonoBehaviour
             isKing = true;
         }
     }
+
+    public List<Vector2> checkForMove(CSS_Piece piece, CSS_Piece[,] board)
+    {
+        List<Vector2> moves = new List<Vector2>();
+
+        Vector2 place = piece.FindPlace(board);
+
+        // top check
+        if(piece.isWhite || piece.isKing)
+        {
+            if (place.x + 2 < 8 && place.y + 2 < 8 && board[(int)place.x + 1, (int)place.y + 1] != null)
+            {
+                if (board[(int)place.x + 1, (int)place.y + 1].isWhite != piece.isWhite && board[(int)place.x + 2, (int)place.y + 2] == null)
+                {
+                    moves.Add(new Vector2(place.x + 2, place.y + 2));
+                }
+            }
+            if (place.x - 2 > -1 && place.y + 2 < 8 && board[(int)place.x - 1, (int)place.y + 1] != null)
+            {
+                if (board[(int)place.x - 1, (int)place.y + 1].isWhite != piece.isWhite && board[(int)place.x - 2, (int)place.y + 2] == null)
+                {
+                    moves.Add(new Vector2(place.x - 2, place.y + 2));
+                }
+            }
+        }
+
+        // bottom check
+        if (!piece.isWhite || piece.isKing)
+        {
+            if (place.x + 2 < 8 && place.y - 2 > -1 && board[(int)place.x + 1, (int)place.y - 1] != null)
+            {
+                if (board[(int)place.x + 1, (int)place.y - 1].isWhite != piece.isWhite && board[(int)place.x + 2, (int)place.y - 2] == null)
+                {
+                    moves.Add(new Vector2(place.x + 2, place.y - 2));
+                }
+            }
+            if (place.x - 2 > -1 && place.y - 2 > -1 && board[(int)place.x - 1, (int)place.y - 1] != null)
+            {
+                if (board[(int)place.x - 1, (int)place.y - 1].isWhite != piece.isWhite && board[(int)place.x - 2, (int)place.y - 2] == null)
+                {
+                    moves.Add(new Vector2(place.x - 2, place.y - 2));
+                }
+            }
+        }
+        return moves;
+    }
+    #endregion
 }

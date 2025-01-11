@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class CSS_GameManager : MonoBehaviour
 {
+    #region variables
     //selectied piece holder
     public GameObject selectedPiece;
 
@@ -15,19 +16,18 @@ public class CSS_GameManager : MonoBehaviour
     public bool whiteTurn = true;
 
     public Collider2D boardCollider;
+    #endregion
 
-
+    #region start/update
     void Start()
     {
         //turns off board collider to start game
         boardCollider = GameObject.Find("Board").GetComponent<Collider2D>();
         boardCollider.enabled = false;
     }
+    #endregion
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    #region classes
 
     public class boardVal
     {
@@ -43,6 +43,21 @@ public class CSS_GameManager : MonoBehaviour
         public int blackCount;
     }
 
+    public class forcedMoves
+    {
+        public forcedMoves(CSS_Piece p, Vector2 v)
+        {
+            piece = p;
+            cell = v;
+        }
+
+        public CSS_Piece piece;
+        public Vector2 cell;
+    }
+
+    #endregion
+
+    #region functions
     public boardVal boardEvaluation(CSS_Piece[,] board)
     {
         boardVal val = new boardVal(0, 0, 0);
@@ -71,4 +86,26 @@ public class CSS_GameManager : MonoBehaviour
 
         return val;
     }
+
+    public List<forcedMoves> searchForForcedMoves(CSS_Piece[,] board)
+    {
+        List<forcedMoves> result = new List<forcedMoves>();
+        for (int x = 0; x < 8; x++)
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                if (board[x, y] != null && board[x, y].checkForMove(board[x, y], board).Count != 0)
+                {
+                    for (int i = 0; i < board[x, y].checkForMove(board[x, y], board).Count; i++)
+                    {
+                        new forcedMoves(board[x, y], board[x, y].checkForMove(board[x, y], board)[i]);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    #endregion
 }

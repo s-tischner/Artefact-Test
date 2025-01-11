@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static CSS_GameManager;
 
 // Board script
 // generates board and pieces
@@ -6,7 +9,7 @@ using UnityEngine;
 // authored by Stefanie Tischner with code referenced from https://www.youtube.com/watch?v=93o_Ad5C5Ds&t=679s
 public class CSS_Board : MonoBehaviour
 {
-
+    #region vars
     //houses the pieces
     public CSS_Piece[,] Pieces = new CSS_Piece[8,8];
 
@@ -15,8 +18,9 @@ public class CSS_Board : MonoBehaviour
     [SerializeField] GameObject Black;
 
     CSS_GameManager gameManager;
+    #endregion
 
-
+    #region start/update
     void Start()
     {
         //finds game manager
@@ -75,7 +79,9 @@ public class CSS_Board : MonoBehaviour
         }
 
     }
+    #endregion
 
+    #region functions
     //generates the board
     private void GenerateBoard()
     {
@@ -120,4 +126,5 @@ public class CSS_Board : MonoBehaviour
             }
         }
     }
+    #endregion
 }
