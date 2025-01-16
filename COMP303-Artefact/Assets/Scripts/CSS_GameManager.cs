@@ -94,11 +94,11 @@ public class CSS_GameManager : MonoBehaviour
         {
             for (int y = 0; y < 8; y++)
             {
-                if (board[x, y] != null && board[x, y].checkForMove(board[x, y], board).Count != 0)
+                if (board[x, y] != null)
                 {
                     for (int i = 0; i < board[x, y].checkForMove(board[x, y], board).Count; i++)
                     {
-                        new forcedMoves(board[x, y], board[x, y].checkForMove(board[x, y], board)[i]);
+                        result.Add(new forcedMoves(board[x, y], board[x, y].checkForMove(board[x, y], board)[i]));
                     }
                 }
             }

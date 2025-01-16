@@ -13,6 +13,8 @@ public class CSS_Board : MonoBehaviour
     //houses the pieces
     public CSS_Piece[,] Pieces = new CSS_Piece[8,8];
 
+    public List<forcedMoves> forcedMoves = new List<forcedMoves>();
+
     //refs to prefabs
     [SerializeField] GameObject White;
     [SerializeField] GameObject Black;
@@ -36,6 +38,7 @@ public class CSS_Board : MonoBehaviour
     {
         if(gameManager.selectedPiece != null)
         {
+
             // code to convert world space into game space
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
             Vector3 cellPos = Vector3.zero;
@@ -49,7 +52,7 @@ public class CSS_Board : MonoBehaviour
             var y = (cellPos.y / .5)-.5f;
 
             // if the move is valid
-            if(gameManager.selectedPiece.GetComponent<CSS_Piece>().validMove(Pieces,new Vector2(((float)x), ((float)y))))
+            if (gameManager.selectedPiece.GetComponent<CSS_Piece>().validMove(Pieces,new Vector2(((float)x), ((float)y))))
             {
                 // finds piece in the array
                 Vector2 ogPlace = gameManager.selectedPiece.GetComponent<CSS_Piece>().FindPlace(Pieces);
@@ -60,19 +63,48 @@ public class CSS_Board : MonoBehaviour
                 int x2 = (int)x;
                 int y2 = (int)y;
 
-                // gets rid of old spot
-                Pieces[x1, y1] = null;
+                if (forcedMoves.Count != 0)
+                {
+                    for (int i = 0; i < forcedMoves.Count; i++)
+                    {
+                        if (forcedMoves[i].piece == gameManager.selectedPiece.GetComponent<CSS_Piece>() && forcedMoves[i].cell == new Vector2(x2, y2))
+                        {
+                            // gets rid of old spot
+                            Pieces[x1, y1] = null;
 
-                //puts the piece into the new place
-                Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
+                            //puts the piece into the new place
+                            Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
 
-                if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
+                            if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
 
-                //updates board
-                UpdateBoard();
+                            gameManager.whiteTurn = !gameManager.whiteTurn;
 
-                //unselects piece
-                gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
+                            //updates board
+                            UpdateBoard();
+                        }
+                    }
+
+                    //unselects piece
+                    gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
+                }
+                else
+                {
+                    // gets rid of old spot
+                    Pieces[x1, y1] = null;
+
+                    //puts the piece into the new place
+                    Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
+
+                    if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
+
+                    gameManager.whiteTurn = !gameManager.whiteTurn;
+
+                    //updates board
+                    UpdateBoard();
+
+                    //unselects piece
+                    gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
+                }
             }
 
             
@@ -125,6 +157,16 @@ public class CSS_Board : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SaveBoard()
+    {
+
+    }
+
+    public void LoadBoard()
+    {
+
     }
     #endregion
 }

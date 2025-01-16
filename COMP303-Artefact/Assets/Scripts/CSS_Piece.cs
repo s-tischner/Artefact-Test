@@ -71,6 +71,10 @@ public class CSS_Piece : MonoBehaviour
         else spriteRenderer.sprite = KingSelect;
 
         gameManager.selectedPiece = gameObject;
+
+        // checks for any forced moves
+        board.forcedMoves = gameManager.searchForForcedMoves(board.Pieces);
+
         gameManager.boardCollider.enabled = true;
     }
     #endregion
@@ -98,7 +102,6 @@ public class CSS_Piece : MonoBehaviour
             if (board[(int)cell.x, (int)cell.y] != null) return false;
             if (cell.y == pos.y - 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1))
             {
-                gameManager.whiteTurn = !gameManager.whiteTurn;
                 checkForKing(cell);
                 return true;
             }
@@ -111,7 +114,6 @@ public class CSS_Piece : MonoBehaviour
                 {
                     board[(int)pos.x + 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x + 1, (int)pos.y - 1] = null;
-                    gameManager.whiteTurn = !gameManager.whiteTurn;
                     checkForKing(cell);
                     return true;
                 }
@@ -124,7 +126,6 @@ public class CSS_Piece : MonoBehaviour
                 {
                     board[(int)pos.x - 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x - 1, (int)pos.y - 1] = null;
-                    gameManager.whiteTurn = !gameManager.whiteTurn;
                     checkForKing(cell);
                     return true;
                 }
@@ -153,7 +154,6 @@ public class CSS_Piece : MonoBehaviour
             //simple move check
             if (cell.y == pos.y + 1 && (cell.x == pos.x + 1 || cell.x == pos.x - 1))
             {
-                gameManager.whiteTurn = !gameManager.whiteTurn;
                 checkForKing(cell);
                 return true;
             }
@@ -166,7 +166,6 @@ public class CSS_Piece : MonoBehaviour
                 {
                     board[(int)pos.x + 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x + 1, (int)pos.y + 1] = null;
-                    gameManager.whiteTurn = !gameManager.whiteTurn;
                     checkForKing(cell);
                     return true;
                 }
@@ -179,7 +178,6 @@ public class CSS_Piece : MonoBehaviour
                 {
                     board[(int)pos.x - 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x - 1, (int)pos.y + 1] = null;
-                    gameManager.whiteTurn = !gameManager.whiteTurn;
                     checkForKing(cell);
                     return true;
                 }
@@ -233,8 +231,10 @@ public class CSS_Piece : MonoBehaviour
         // top check
         if(piece.isWhite || piece.isKing)
         {
+
             if (place.x + 2 < 8 && place.y + 2 < 8 && board[(int)place.x + 1, (int)place.y + 1] != null)
             {
+
                 if (board[(int)place.x + 1, (int)place.y + 1].isWhite != piece.isWhite && board[(int)place.x + 2, (int)place.y + 2] == null)
                 {
                     moves.Add(new Vector2(place.x + 2, place.y + 2));
