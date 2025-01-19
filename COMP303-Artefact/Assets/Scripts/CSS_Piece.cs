@@ -208,6 +208,7 @@ public class CSS_Piece : MonoBehaviour
         return new Vector2(10,10);
     }
 
+    //checks if a piece is eligable to become a king
     private void checkForKing(Vector2 pos)
     {
         if(pos.y == 0 && !isKing && !isWhite)
@@ -223,6 +224,7 @@ public class CSS_Piece : MonoBehaviour
         }
     }
 
+    //checks if a piece is forced to take a piece
     public List<Vector2> checkForMove(CSS_Piece piece, CSS_Piece[,] board)
     {
         List<Vector2> moves = new List<Vector2>();

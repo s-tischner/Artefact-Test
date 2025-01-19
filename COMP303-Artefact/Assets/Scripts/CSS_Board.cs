@@ -67,8 +67,10 @@ public class CSS_Board : MonoBehaviour
                 int x2 = (int)x;
                 int y2 = (int)y;
 
+                //checks if theres any forced moves
                 if (forcedMoves.Count != 0)
                 {
+                    // goes through list of moves and checks if the one made is in the list
                     for (int i = 0; i < forcedMoves.Count; i++)
                     {
                         if (forcedMoves[i].piece == gameManager.selectedPiece.GetComponent<CSS_Piece>() && forcedMoves[i].cell == new Vector2(x2, y2))
@@ -79,6 +81,7 @@ public class CSS_Board : MonoBehaviour
                             //puts the piece into the new place
                             Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
 
+                            //checks for game over
                             if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
 
                             gameManager.whiteTurn = !gameManager.whiteTurn;
@@ -91,6 +94,7 @@ public class CSS_Board : MonoBehaviour
                     //unselects piece
                     gameManager.selectedPiece.GetComponent<CSS_Piece>().Deselect();
                 }
+                // same code but if there isnt a forced move
                 else
                 {
                     // gets rid of old spot
@@ -99,6 +103,7 @@ public class CSS_Board : MonoBehaviour
                     //puts the piece into the new place
                     Pieces[x2, y2] = gameManager.selectedPiece.GetComponent<CSS_Piece>();
 
+                    //checks if game over
                     if (gameManager.boardEvaluation(Pieces).whiteCount == 0 || gameManager.boardEvaluation(Pieces).blackCount == 0) print("game over");
 
                     gameManager.whiteTurn = !gameManager.whiteTurn;
@@ -163,21 +168,23 @@ public class CSS_Board : MonoBehaviour
         }
     }
 
+    //saved the board to a JSON file
     public void SaveBoard()
     {
-        
+        // converts board to new array type to be saved
         SArray newBoard = new SArray(gameManager.boardToJSONPrep(Pieces));
 
-        print(newBoard.items.Length);
-
+        //saves to predetermined location
         string saveBoard = JsonUtility.ToJson(newBoard);
         string filepath = Application.persistentDataPath + "/Board.json";
 
         System.IO.File.WriteAllText(filepath, saveBoard);
     }
 
+    //loads in the board
     public void LoadBoard()
     {
+        //gets file
         SArray LoadedBoard;
         string filepath = Application.persistentDataPath + "/Board.json";
 
@@ -187,16 +194,20 @@ public class CSS_Board : MonoBehaviour
 
             LoadedBoard = JsonUtility.FromJson<SArray>(saveText);
 
+            // unscrambles data and updates board
             ReloadBoard(LoadedBoard);
 
             UpdateBoard();
         }
     }
 
+    // gets rid of old data and replaces it with loaded in data
     public void ReloadBoard(SArray loadFile)
     {
+        // kills old board
         DeleteBoardContents(Pieces);
 
+        // gets the data stored in the JSON file and creates new pieces based on it
         for (int i = 0; i < loadFile.items.Length; i++)
         {
             Vector2 pos = loadFile.items[i].pos;
@@ -211,6 +222,7 @@ public class CSS_Board : MonoBehaviour
         }
     }
 
+    // iterates through board and kills all pieces
     public void DeleteBoardContents(CSS_Piece[,] Pieces)
     {
         for (int x = 0; x < 8; x++)

@@ -29,6 +29,7 @@ public class CSS_GameManager : MonoBehaviour
 
     #region classes
 
+    // class that stores basic info about the board
     public class boardVal
     {
         public boardVal(int v, int w, int b)
@@ -43,6 +44,7 @@ public class CSS_GameManager : MonoBehaviour
         public int blackCount;
     }
 
+    // class that stores a piece and a cell it should move to
     public class forcedMoves
     {
         public forcedMoves(CSS_Piece p, Vector2 v)
@@ -55,6 +57,7 @@ public class CSS_GameManager : MonoBehaviour
         public Vector2 cell;
     }
 
+    // stores all data needed to restore a piece
     [System.Serializable]
     public class pieceData
     {
@@ -69,6 +72,7 @@ public class CSS_GameManager : MonoBehaviour
         public Vector2 pos;
     }
 
+    // serializable array
     [System.Serializable]
     public class SArray
     {
@@ -82,9 +86,13 @@ public class CSS_GameManager : MonoBehaviour
     #endregion
 
     #region functions
+
+    //evaluates board
     public boardVal boardEvaluation(CSS_Piece[,] board)
     {
         boardVal val = new boardVal(0, 0, 0);
+
+        // iterates board and takes note of how many of each color and kings there are
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 8; x++)
@@ -111,9 +119,11 @@ public class CSS_GameManager : MonoBehaviour
         return val;
     }
 
+    //finds all moves every piece is forced to make and adds them to a list
     public List<forcedMoves> searchForForcedMoves(CSS_Piece[,] board)
     {
         List<forcedMoves> result = new List<forcedMoves>();
+
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
@@ -131,6 +141,7 @@ public class CSS_GameManager : MonoBehaviour
         return result;
     }
 
+    //turns all the pieces into the data structure that gets passed into the JSON file
     public pieceData[] boardToJSONPrep(CSS_Piece[,] board)
     {
         int j = 0;
