@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using static CSS_GameManager;
@@ -7,6 +9,8 @@ using static CSS_GameManager;
 // generates board and pieces
 // houses update board function that refreshes the visual representation of the game
 // authored by Stefanie Tischner with code referenced from https://www.youtube.com/watch?v=93o_Ad5C5Ds&t=679s
+
+[System.Serializable]
 public class CSS_Board : MonoBehaviour
 {
     #region vars
@@ -161,12 +165,66 @@ public class CSS_Board : MonoBehaviour
 
     public void SaveBoard()
     {
+        
+        SArray newBoard = new SArray(gameManager.boardToJSONPrep(Pieces));
 
+        print(newBoard.items.Length);
+
+        string saveBoard = JsonUtility.ToJson(newBoard);
+        string filepath = Application.persistentDataPath + "/Board.json";
+
+        System.IO.File.WriteAllText(filepath, saveBoard);
     }
 
     public void LoadBoard()
     {
+        SArray LoadedBoard;
+        string filepath = Application.persistentDataPath + "/Board.json";
 
+        if (File.Exists(filepath))
+        {
+            string saveText = File.ReadAllText(filepath);
+
+            LoadedBoard = JsonUtility.FromJson<SArray>(saveText);
+
+            ReloadBoard(LoadedBoard);
+
+            UpdateBoard();
+        }
+    }
+
+    public void ReloadBoard(SArray loadFile)
+    {
+        DeleteBoardContents(Pieces);
+
+        for (int i = 0; i < loadFile.items.Length; i++)
+        {
+            Vector2 pos = loadFile.items[i].pos;
+            if (loadFile.items[i].isWhite)
+            {
+                GeneratePiece((int)pos.x, (int)pos.y, White);
+            }
+            else
+            {
+                GeneratePiece((int)pos.x, (int)pos.y, Black);
+            }
+        }
+    }
+
+    public void DeleteBoardContents(CSS_Piece[,] Pieces)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                if (Pieces[x, y] != null)
+                {
+                    Destroy(Pieces[x, y].gameObject);
+                    Pieces[x,y] = null;
+                }
+            }
+        }
     }
     #endregion
+
 }

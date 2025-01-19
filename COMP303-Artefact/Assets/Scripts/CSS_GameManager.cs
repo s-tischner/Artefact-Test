@@ -55,6 +55,30 @@ public class CSS_GameManager : MonoBehaviour
         public Vector2 cell;
     }
 
+    [System.Serializable]
+    public class pieceData
+    {
+        public pieceData(bool w, bool k, Vector2 p)
+        {
+            isWhite = w;
+            isKing = k;
+            pos = p;
+        }
+        public bool isWhite;
+        public bool isKing;
+        public Vector2 pos;
+    }
+
+    [System.Serializable]
+    public class SArray
+    {
+        public SArray(pieceData[] i)
+        {
+            items = i;
+        }
+        public pieceData[] items;
+    }
+
     #endregion
 
     #region functions
@@ -105,6 +129,39 @@ public class CSS_GameManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public pieceData[] boardToJSONPrep(CSS_Piece[,] board)
+    {
+        int j = 0;
+        int i = 0;
+
+        for (int x = 0; x < 8; x++)
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                if (board[x, y] != null)
+                {
+                    j++;
+                }
+            }
+        }
+
+        pieceData[] newBoard = new pieceData[j];
+
+        for (int x = 0; x < 8; x++)
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                if (board[x, y] != null)
+                {
+                    newBoard[i] = new pieceData(board[x, y].isWhite, board[x, y].isKing, new Vector2(x,y));
+                    i++;
+                }
+            }
+        }
+
+        return newBoard;
     }
 
     #endregion
