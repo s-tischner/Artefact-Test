@@ -16,6 +16,7 @@ public class CSS_Board : MonoBehaviour
     #region vars
     //houses the pieces
     public CSS_Piece[,] Pieces = new CSS_Piece[8,8];
+    public CSS_MiniMax minmax;
 
     public List<forcedMoves> forcedMoves = new List<forcedMoves>();
 
@@ -31,6 +32,7 @@ public class CSS_Board : MonoBehaviour
     {
         //finds game manager
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
+        minmax = GetComponent<CSS_MiniMax>();
 
         //initializes board
         GenerateBoard();
@@ -236,6 +238,24 @@ public class CSS_Board : MonoBehaviour
                 }
             }
         }
+    }
+
+    //test
+    public void doRandom()
+    {
+        print(gameManager.findAllMoves(gameManager.whiteTurn, Pieces).Count);
+        Pieces = gameManager.findAllMoves(gameManager.whiteTurn, Pieces)[0];
+        UpdateBoard();
+        gameManager.whiteTurn = !gameManager.whiteTurn;
+    }
+
+    //test
+    public void doMinMax()
+    {
+        KeyValuePair<float, CSS_Piece[,]> minMaxTest = minmax.Minmax(Pieces, 5, gameManager.whiteTurn);
+        Pieces = minMaxTest.Value;
+        UpdateBoard();
+        gameManager.whiteTurn = !gameManager.whiteTurn;
     }
     #endregion
 

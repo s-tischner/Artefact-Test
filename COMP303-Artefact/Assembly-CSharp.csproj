@@ -62,7 +62,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CSS_Board.cs" />
+    <Compile Include="Assets\Scripts\CSS_MiniMax.cs" />
+    <Compile Include="Assets\Scripts\CSS_UCT.cs" />
     <Compile Include="Assets\Scripts\CSS_GameManager.cs" />
+    <Compile Include="Assets\Scripts\CSS_OLETS.cs" />
     <Compile Include="Assets\Scripts\CSS_Piece.cs" />
   </ItemGroup>
   <ItemGroup>
