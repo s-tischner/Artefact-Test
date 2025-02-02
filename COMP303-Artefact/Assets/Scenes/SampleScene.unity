@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 968486906}
         m_TargetAssemblyTypeName: CSS_Board, Assembly-CSharp
-        m_MethodName: doMinMax
+        m_MethodName: doUCT
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -862,6 +862,7 @@ GameObject:
   - component: {fileID: 968486906}
   - component: {fileID: 968486910}
   - component: {fileID: 968486911}
+  - component: {fileID: 968486912}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -882,6 +883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minmax: {fileID: 0}
+  UCT: {fileID: 0}
   White: {fileID: 2752993642961042664, guid: cb8b33f17a4792a4f91d13d728282b00, type: 3}
   Black: {fileID: 8891143857563022763, guid: 4537e058f1c09e2488e507e9813caf40, type: 3}
 --- !u!212 &968486908
@@ -1011,6 +1013,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d78e0dec1746749b18e1b3021b6dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &968486912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 968486905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f99081d658ac664f834611ab6fae1c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxThinkTime: 1
 --- !u!1 &998402205
 GameObject:
   m_ObjectHideFlags: 0
