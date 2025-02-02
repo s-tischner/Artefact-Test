@@ -4,11 +4,12 @@ using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using static CSS_GameManager;
+using static UnityEditor.PlayerSettings;
 
 // Board script
 // generates board and pieces
 // houses update board function that refreshes the visual representation of the game
-// authored by Stefanie Tischner with code referenced from https://www.youtube.com/watch?v=93o_Ad5C5Ds&t=679s
+// authored by Student Number: 2105232 with code referenced from https://www.youtube.com/watch?v=93o_Ad5C5Ds&t=679s
 
 [System.Serializable]
 public class CSS_Board : MonoBehaviour
@@ -17,6 +18,7 @@ public class CSS_Board : MonoBehaviour
     //houses the pieces
     public CSS_Piece[,] Pieces = new CSS_Piece[8,8];
     public CSS_MiniMax minmax;
+    public CSS_UCT UCT;
 
     public List<forcedMoves> forcedMoves = new List<forcedMoves>();
 
@@ -33,6 +35,7 @@ public class CSS_Board : MonoBehaviour
         //finds game manager
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
         minmax = GetComponent<CSS_MiniMax>();
+        UCT = GetComponent<CSS_UCT>();
 
         //initializes board
         GenerateBoard();
@@ -89,6 +92,7 @@ public class CSS_Board : MonoBehaviour
                             gameManager.whiteTurn = !gameManager.whiteTurn;
 
                             //updates board
+                            refreshBoard(Pieces);
                             UpdateBoard();
                         }
                     }
@@ -111,6 +115,7 @@ public class CSS_Board : MonoBehaviour
                     gameManager.whiteTurn = !gameManager.whiteTurn;
 
                     //updates board
+                    refreshBoard(Pieces);
                     UpdateBoard();
 
                     //unselects piece
@@ -150,7 +155,7 @@ public class CSS_Board : MonoBehaviour
     //generates the piece based on prefab
     private void GeneratePiece(int x, int y, GameObject color)
     {
-        GameObject piece = Instantiate(color);
+        GameObject piece = Instantiate(color, gameObject.transform);
         CSS_Piece p = piece.GetComponent<CSS_Piece>();
         Pieces[x,y] = p;
     }
@@ -245,17 +250,44 @@ public class CSS_Board : MonoBehaviour
     {
         print(gameManager.findAllMoves(gameManager.whiteTurn, Pieces).Count);
         Pieces = gameManager.findAllMoves(gameManager.whiteTurn, Pieces)[0];
+        refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
     }
 
-    //test
     public void doMinMax()
     {
-        KeyValuePair<float, CSS_Piece[,]> minMaxTest = minmax.Minmax(Pieces, 5, gameManager.whiteTurn);
+        KeyValuePair<float, CSS_Piece[,]> minMaxTest = minmax.Minmax(Pieces, 8, gameManager.whiteTurn);
         Pieces = minMaxTest.Value;
+        refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
+    }
+
+    public void doUCT()
+    {
+        print(gameManager.whiteTurn);
+        Pieces = UCT.UCTMainLoop(Pieces, gameManager.whiteTurn);
+        refreshBoard(Pieces);
+        UpdateBoard();
+        gameManager.whiteTurn = !gameManager.whiteTurn;
+    }
+
+    public void refreshBoard(CSS_Piece[,] board)
+    {
+        Transform[] pieces = gameObject.GetComponentsInChildren<Transform>();
+        for (int a = 0; a < pieces.Length; a++)
+        {
+            bool exists = false;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i,j] == pieces[a].gameObject.GetComponent<CSS_Piece>()) exists = true;
+                }
+            }
+            if (!exists) pieces[a].gameObject.SetActive(false);
+        }
     }
     #endregion
 

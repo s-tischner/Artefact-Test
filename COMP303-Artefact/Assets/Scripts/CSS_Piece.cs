@@ -5,7 +5,7 @@ using static UnityEditor.PlayerSettings;
 
 // Piece script
 // handles all internal piece logic
-// authored by Stefanie Tischner
+// authored by Student Number: 2105232
 
 
 public class CSS_Piece : MonoBehaviour
@@ -113,7 +113,6 @@ public class CSS_Piece : MonoBehaviour
                 // if piece's color doesnt match own
                 if (board[(int)pos.x + 1, (int)pos.y - 1].GetComponent<CSS_Piece>().isWhite != isWhite)
                 {
-                    board[(int)pos.x + 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x + 1, (int)pos.y - 1] = null;
                     checkForKing(cell);
                     return true;
@@ -125,7 +124,6 @@ public class CSS_Piece : MonoBehaviour
                 // if piece's color doesnt match own
                 if (board[(int)pos.x - 1, (int)pos.y - 1].GetComponent<CSS_Piece>().isWhite != isWhite)
                 {
-                    board[(int)pos.x - 1, (int)pos.y - 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x - 1, (int)pos.y - 1] = null;
                     checkForKing(cell);
                     return true;
@@ -165,7 +163,6 @@ public class CSS_Piece : MonoBehaviour
                 // if piece's color doesnt match own
                 if(board[(int)pos.x + 1, (int)pos.y + 1].GetComponent<CSS_Piece>().isWhite != isWhite)
                 {
-                    board[(int)pos.x + 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x + 1, (int)pos.y + 1] = null;
                     checkForKing(cell);
                     return true;
@@ -177,7 +174,6 @@ public class CSS_Piece : MonoBehaviour
                 // if piece's color doesnt match own
                 if (board[(int)pos.x - 1, (int)pos.y + 1].GetComponent<CSS_Piece>().isWhite != isWhite)
                 {
-                    board[(int)pos.x - 1, (int)pos.y + 1].gameObject.SetActive(false); // temp
                     board[(int)pos.x - 1, (int)pos.y + 1] = null;
                     checkForKing(cell);
                     return true;

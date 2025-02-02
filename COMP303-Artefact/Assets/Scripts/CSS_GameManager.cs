@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Game Manager script
 // This script is mainly used to house communication between scripts and hold certain global variables
-// authored by Stefanie Tischner
+// authored by Student Number: 2105232
 
 public class CSS_GameManager : MonoBehaviour
 {
@@ -136,6 +136,13 @@ public class CSS_GameManager : MonoBehaviour
                     Vector2 pos = forced[i].piece.FindPlace(board);
 
                     temp[(int)forced[i].cell.x, (int)forced[i].cell.y] = forced[i].piece;
+
+                    //kills taken piece
+                    int a = (int)((forced[i].cell.x + pos.x)/2);
+                    int b = (int)((forced[i].cell.y + pos.y)/2);
+                    temp[a, b] = null;
+
+                    //removes from old spot
                     temp[(int)pos.x, (int)pos.y] = null;
                     moves.Add(temp);
                 }
@@ -152,7 +159,6 @@ public class CSS_GameManager : MonoBehaviour
                 {
                     if (board[x,y] != null && board[x, y].isWhite == whiteTurn)
                     {
-                        print("cum");
                         for (int i = 0; i < 8; i++)
                         {
                             for (int j = 0; j < 8; j++)
