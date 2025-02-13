@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 //MinMax algorithm script
@@ -20,9 +19,6 @@ public class CSS_UCT : MonoBehaviour
     //controls exploration vs exploitation
     private const float ExplorationThreshold = 1.41f;
 
-    //max time in seconds for computing move
-    public float maxThinkTime = 1.0f;
-
     void Start()
     {
         //gets game manager
@@ -33,10 +29,10 @@ public class CSS_UCT : MonoBehaviour
     #region main logic loop
 
     //main logic loop
-    public CSS_Piece[,] UCTMainLoop(CSS_Piece[,] board, bool whiteTurn)
+    public CSS_Piece[,] UCTMainLoop(CSS_Piece[,] board, bool whiteTurn, float maxThinkTime)
     {
         //sets root node
-        Node root = new Node(null, gameManager.copyBoard(board), whiteTurn);
+        UCTNode root = new UCTNode(null, gameManager.copyBoard(board), whiteTurn);
 
         //gets starting time
         float startTime = Time.realtimeSinceStartup;
@@ -45,11 +41,11 @@ public class CSS_UCT : MonoBehaviour
         while (Time.realtimeSinceStartup - startTime < maxThinkTime)
         {
             //sets start node
-            Node node = Select(root);
+            UCTNode node = Select(root);
 
             //expands all children and picks a random one
             if (gameManager.findAllMoves(node.whiteTurn, node.board).Count != 0) Expand(node);
-            Node childNode = node.children.Count > 0? node.children[Random.Range(0, node.children.Count)]: node;
+            UCTNode childNode = node.children.Count > 0? node.children[Random.Range(0, node.children.Count)]: node;
 
             // updates nodes with info
             int result = NodeEval(childNode);
@@ -62,15 +58,16 @@ public class CSS_UCT : MonoBehaviour
         }
 
         //gets the best performing child
-        Node bestChild = root.children.OrderByDescending(child => child.visits).FirstOrDefault();
+        UCTNode bestChild = root.children.OrderByDescending(child => child.visits).FirstOrDefault();
         return bestChild != null ? bestChild.board : null;
     }
 
     #endregion
+
     #region functions
 
     //selects a node
-    private Node Select(Node node)
+    private UCTNode Select(UCTNode node)
     {
         //gets node from children based on balancing function
         while (node.children.Count > 0)
@@ -81,29 +78,28 @@ public class CSS_UCT : MonoBehaviour
     }
 
     // decides what nodes get picked based on how many wins they have and how many times theyve been visited
-    private float UCTBalancing(Node node)
+    private float UCTBalancing(UCTNode node)
     {
         // explores nodes with no visits
         if (node.visits == 0) return 10000000000f;
 
         // equation to determine priority exploration order based on visits, parent visits, and wins
         // equation taken from above linked code
-        return (float)node.wins / node.visits +
-               ExplorationThreshold * Mathf.Sqrt(Mathf.Log(node.parent.visits) / node.visits);
+        return (float)node.wins / (node.visits + .0001f) + ExplorationThreshold * Mathf.Sqrt(Mathf.Log(node.parent.visits) / (node.visits + .0001f));
     }
 
     // gets all children and adds them to the list in the node
-    private void Expand(Node node)
+    private void Expand(UCTNode node)
     {
         List<CSS_Piece[,]> possibleMoves = gameManager.findAllMoves(node.whiteTurn, node.board);
         foreach (var move in possibleMoves)
         {
-            node.children.Add(new Node(node, move, !node.whiteTurn));
+            node.children.Add(new UCTNode(node, move, !node.whiteTurn));
         }
     }
 
     //simulates moves and returns an eval based on wins/losses
-    private int NodeEval(Node node)
+    private int NodeEval(UCTNode node)
     {
         CSS_Piece[,] tempBoard = gameManager.copyBoard(node.board);
         bool WT = node.whiteTurn;
@@ -129,17 +125,17 @@ public class CSS_UCT : MonoBehaviour
     #region classes
 
     //node class
-    private class Node
+    private class UCTNode
     {
-        public Node(Node p, CSS_Piece[,] b, bool wT)
+        public UCTNode(UCTNode p, CSS_Piece[,] b, bool wT)
         {
             parent = p;
             board = b;
             whiteTurn = wT;
         }
 
-        public Node parent;
-        public List<Node> children = new List<Node>();
+        public UCTNode parent;
+        public List<UCTNode> children = new List<UCTNode>();
         public CSS_Piece[,] board;
         public bool whiteTurn;
         public int visits = 0;

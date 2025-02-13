@@ -1,25 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 using static CSS_GameManager;
-using static UnityEditor.PlayerSettings;
 
 // Board script
 // generates board and pieces
 // houses update board function that refreshes the visual representation of the game
 // authored by Student Number: 2105232 with code referenced from https://www.youtube.com/watch?v=93o_Ad5C5Ds&t=679s
 
-[System.Serializable]
 public class CSS_Board : MonoBehaviour
 {
     #region vars
     //houses the pieces
     public CSS_Piece[,] Pieces = new CSS_Piece[8,8];
-    public CSS_MiniMax minmax;
-    public CSS_UCT UCT;
 
+    //algo scripts
+    private CSS_MiniMax minmax;
+    private CSS_UCT UCT;
+
+    //parameters for algos
+    public float UCTThinkTime;
+    public int minmaxDepth;
+
+    //forced moves
     public List<forcedMoves> forcedMoves = new List<forcedMoves>();
 
     //refs to prefabs
@@ -248,26 +252,35 @@ public class CSS_Board : MonoBehaviour
     //test
     public void doRandom()
     {
-        print(gameManager.findAllMoves(gameManager.whiteTurn, Pieces).Count);
         Pieces = gameManager.findAllMoves(gameManager.whiteTurn, Pieces)[0];
         refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
     }
 
+    //test
     public void doMinMax()
     {
-        KeyValuePair<float, CSS_Piece[,]> minMaxTest = minmax.Minmax(Pieces, 8, gameManager.whiteTurn);
+        KeyValuePair<float, CSS_Piece[,]> minMaxTest = minmax.Minmax(Pieces, minmaxDepth, gameManager.whiteTurn);
         Pieces = minMaxTest.Value;
         refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
     }
 
+    //test
     public void doUCT()
     {
-        print(gameManager.whiteTurn);
-        Pieces = UCT.UCTMainLoop(Pieces, gameManager.whiteTurn);
+        Pieces = UCT.UCTMainLoop(Pieces, gameManager.whiteTurn, UCTThinkTime);
+        refreshBoard(Pieces);
+        UpdateBoard();
+        gameManager.whiteTurn = !gameManager.whiteTurn;
+    }
+
+    public void doOLETS()
+    {
+        CSS_Piece[,] nextBoard = CSS_OLETS.OLETSMainLoop(Pieces, gameManager.whiteTurn);
+        Pieces = nextBoard;
         refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
