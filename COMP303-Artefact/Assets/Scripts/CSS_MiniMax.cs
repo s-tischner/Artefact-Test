@@ -27,7 +27,7 @@ public class CSS_MiniMax : MonoBehaviour
 
         if (maxPlayer)
         {
-            float maxEval = float.NegativeInfinity;
+            float maxEval = -100000000;
             CSS_Piece[,] bestMove = null;
 
             List<CSS_Piece[,]> allMoves = gameManager.findAllMoves(true, board); // true = white's turn
@@ -47,7 +47,7 @@ public class CSS_MiniMax : MonoBehaviour
         }
         else
         {
-            float minEval = float.PositiveInfinity;
+            float minEval = 1000000000;
             CSS_Piece[,] bestMove = null;
 
             List<CSS_Piece[,]> allMoves = gameManager.findAllMoves(false, board); // false = black's turn

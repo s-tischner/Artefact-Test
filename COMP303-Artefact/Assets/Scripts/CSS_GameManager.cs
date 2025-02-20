@@ -16,11 +16,18 @@ public class CSS_GameManager : MonoBehaviour
     public bool whiteTurn = true;
 
     public Collider2D boardCollider;
+
+    public List<Vector2> OLETS;
+
+    public List<Vector2> UCT;
+
     #endregion
 
     #region start/update
     void Start()
     {
+        OLETS = new List<Vector2>();
+        UCT = new List<Vector2>();
         //turns off board collider to start game
         boardCollider = GameObject.Find("Board").GetComponent<Collider2D>();
         boardCollider.enabled = false;

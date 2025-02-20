@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 //OLETS algorithm script
@@ -13,7 +12,7 @@ public class CSS_OLETS : MonoBehaviour
     // vars
     const int depth = 10;
     const float ExplorationThreshold = 1.41f;
-    const int ThinkTime = 1000;
+    const int ThinkTime = 500;
 
     private static CSS_GameManager gameManager;
 
@@ -26,6 +25,7 @@ public class CSS_OLETS : MonoBehaviour
     //main logic loop
     public static CSS_Piece[,] OLETSMainLoop(CSS_Piece[,] board, bool whiteTurn)
     {
+        int runs = 0;
         //makes root node and expands it
         OLETSTNode root = new OLETSTNode(null, board, whiteTurn, 0);
         root.Expand();
@@ -36,6 +36,7 @@ public class CSS_OLETS : MonoBehaviour
         //while under time
         while ((Time.realtimeSinceStartup * 1000f - startTime) < ThinkTime)
         {
+            runs++;
             // pick a node and run random role outs
             OLETSTNode selected = root.SelectNode();
             float value = selected.Rollout();
@@ -43,6 +44,8 @@ public class CSS_OLETS : MonoBehaviour
             //load gathered info into parents
             selected.Backpropagate(value);
         }
+
+        gameManager.OLETS.Add(new Vector2(gameManager.OLETS.Count, runs));
 
         //returns best child
         OLETSTNode bestChild = root.GetBestChild();

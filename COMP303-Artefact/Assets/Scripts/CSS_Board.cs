@@ -277,6 +277,7 @@ public class CSS_Board : MonoBehaviour
         gameManager.whiteTurn = !gameManager.whiteTurn;
     }
 
+    //test
     public void doOLETS()
     {
         CSS_Piece[,] nextBoard = CSS_OLETS.OLETSMainLoop(Pieces, gameManager.whiteTurn);
@@ -284,6 +285,23 @@ public class CSS_Board : MonoBehaviour
         refreshBoard(Pieces);
         UpdateBoard();
         gameManager.whiteTurn = !gameManager.whiteTurn;
+    }
+
+    //test
+    public void PrintNodeCount()
+    {
+        print("OLETS");
+        for (int i = 0; i < gameManager.OLETS.Count; i++)
+        {
+            print(gameManager.OLETS[i].ToString());
+        }
+
+        print("UCT");
+        for (int i = 0; i < gameManager.UCT.Count; i++)
+        {
+            print(gameManager.UCT[i].ToString());
+        }
+
     }
 
     public void refreshBoard(CSS_Piece[,] board)

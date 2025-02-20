@@ -31,6 +31,7 @@ public class CSS_UCT : MonoBehaviour
     //main logic loop
     public CSS_Piece[,] UCTMainLoop(CSS_Piece[,] board, bool whiteTurn, float maxThinkTime)
     {
+        int runs = 0;
         //sets root node
         UCTNode root = new UCTNode(null, gameManager.copyBoard(board), whiteTurn);
 
@@ -40,6 +41,7 @@ public class CSS_UCT : MonoBehaviour
         //while its under the given computing time
         while (Time.realtimeSinceStartup - startTime < maxThinkTime)
         {
+            runs++;
             //sets start node
             UCTNode node = Select(root);
 
@@ -56,6 +58,9 @@ public class CSS_UCT : MonoBehaviour
                 childNode = childNode.parent;
             }
         }
+
+
+        gameManager.UCT.Add(new Vector2(gameManager.UCT.Count, runs));
 
         //gets the best performing child
         UCTNode bestChild = root.children.OrderByDescending(child => child.visits).FirstOrDefault();

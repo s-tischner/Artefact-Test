@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 968486906}
         m_TargetAssemblyTypeName: CSS_Board, Assembly-CSharp
-        m_MethodName: doMinMax
+        m_MethodName: PrintNodeCount
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UCTThinkTime: 0.5
-  minmaxDepth: 8
+  minmaxDepth: 16
   White: {fileID: 2752993642961042664, guid: cb8b33f17a4792a4f91d13d728282b00, type: 3}
   Black: {fileID: 8891143857563022763, guid: 4537e058f1c09e2488e507e9813caf40, type: 3}
 --- !u!212 &968486908
@@ -1481,6 +1481,8 @@ MonoBehaviour:
   selectedPiece: {fileID: 0}
   whiteTurn: 1
   boardCollider: {fileID: 0}
+  OLETS: []
+  UCT: []
 --- !u!4 &1137864481
 Transform:
   m_ObjectHideFlags: 0
