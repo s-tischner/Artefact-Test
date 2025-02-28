@@ -9,10 +9,11 @@ using UnityEngine;
 
 public class CSS_OLETS : MonoBehaviour
 {
+    #region vars and start
     // vars
     const int depth = 10;
     const float ExplorationThreshold = 1.41f;
-    const int ThinkTime = 500;
+    const int ThinkTime = 2000;
 
     private static CSS_GameManager gameManager;
 
@@ -21,7 +22,9 @@ public class CSS_OLETS : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
     }
+    #endregion
 
+    #region main logic loop
     //main logic loop
     public static CSS_Piece[,] OLETSMainLoop(CSS_Piece[,] board, bool whiteTurn)
     {
@@ -53,7 +56,9 @@ public class CSS_OLETS : MonoBehaviour
         if (bestChild != null) return bestChild.self;
         else return null;
     }
+    #endregion
 
+    #region node class and functions
     // tree node class
     //most of the functions are stored within the class bc the main loop is static
     private class OLETSTNode
@@ -181,4 +186,5 @@ public class CSS_OLETS : MonoBehaviour
             return best;
         }
     }
+    #endregion
 }

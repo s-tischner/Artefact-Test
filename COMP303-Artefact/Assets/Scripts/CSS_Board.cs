@@ -320,6 +320,21 @@ public class CSS_Board : MonoBehaviour
             if (!exists) pieces[a].gameObject.SetActive(false);
         }
     }
+
+    //refreshes the board based on the visual version of it
+    public void refreshBoardFromGame(CSS_Piece[,] board)
+    {
+        Transform[] pieces = gameObject.GetComponentsInChildren<Transform>();
+        for (int a = 0; a < pieces.Length; a++)
+        {
+            if (pieces[a].gameObject.active == false)
+            {
+                var x = (pieces[a].position.x / .5) - .5f;
+                var y = (pieces[a].position.y / .5) - .5f;
+                board[(int)x,(int)y] = null;
+            }
+        }
+    }
     #endregion
 
 }

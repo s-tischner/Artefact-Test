@@ -9,12 +9,16 @@ using UnityEngine;
 
 public class CSS_MiniMax : MonoBehaviour
 {
+    #region vars and start
     private CSS_GameManager gameManager;
 
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<CSS_GameManager>();
     }
+    #endregion
+
+    #region main logic loop
 
     public KeyValuePair<float, CSS_Piece[,]> Minmax(CSS_Piece[,] board, int depth, bool maxPlayer)
     {
@@ -66,4 +70,5 @@ public class CSS_MiniMax : MonoBehaviour
             return new KeyValuePair<float, CSS_Piece[,]>(minEval, bestMove);
         }
     }
+    #endregion
 }
